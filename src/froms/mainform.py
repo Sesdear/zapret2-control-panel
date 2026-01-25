@@ -1,23 +1,55 @@
 import npyscreen
-import subprocess
+from src.utils.service_actions import ServiceActions
 
 class MainForm(npyscreen.FormBaseNew):
     
     def create(self):
                 
-        if self.check_zapret_service() == "active":
-            self.zapret_status = "Выключить zapret2"
+        status = ServiceActions.check_zapret_service()
+        
+        if status == "active":
+            self.zapret_status = "Выключить"
         else:
-            self.zapret_status = "Включить zapret2"
+            self.zapret_status = f"Включить"
         
-        self.add(npyscreen.TitleText, name=f"Статус Zapret: {self.check_zapret_service()}", editable=False)
+        self.service_status_title = self.add(npyscreen.TitleFixedText, 
+                name="Статус сервиса:", 
+                value=status, 
+                editable=False)
         
-        self.add(npyscreen.ButtonPress, name=self.zapret_status, when_pressed_function=self.toggle_zapret_service)
+        self.service_button = self.add(npyscreen.ButtonPress, 
+                name=self.zapret_status, 
+                when_pressed_function=self.toggle_service)
+        
         self.add(npyscreen.ButtonPress, name="Настройка конфигурации", when_pressed_function=self.call_config_form)
         self.add(npyscreen.ButtonPress, name="Настройка сервиса", when_pressed_function=self.call_service_form)
         self.add(npyscreen.ButtonPress, name="Проверить на наличие обновлений", when_pressed_function=self.unknown_function)
+        self.add(npyscreen.FixedText, value="")
         self.add(npyscreen.ButtonPress, name="Выйти", when_pressed_function=self.exit_application)
         self.add(npyscreen.TitleText, name="\n\nCreated by sesdear.github.io", editable=False)
+
+    def toggle_service(self):
+        result = ServiceActions.toggle_zapret_service()
+
+        if result.startswith("error"):
+            npyscreen.notify_confirm(
+                f"Ошибка: {result}",
+                title="Ошибка"
+            )
+            return
+
+        status = ServiceActions.check_zapret_service()
+
+        if status == "active":
+            self.service_button.name = "Выключить"
+        else:
+            self.service_button.name = "Включить"
+
+        self.service_status_title.value = status
+
+        self.service_button.display()
+        self.service_status_title.display()
+
 
     def unknown_function(self):
         self.parentApp.switchForm('UNKNOWN')
@@ -27,29 +59,6 @@ class MainForm(npyscreen.FormBaseNew):
 
     def call_config_form(self):
         self.parentApp.switchForm('CONFIG')
-
-    def check_zapret_service(self) -> str:
-        try:
-            result = subprocess.run(['systemctl', 'is-active', 'zapret2'], capture_output=True, text=True, check=True)
-            status = result.stdout.strip()
-            if status == 'active':
-                return "active"
-            else:
-                return "inactive"
-        except subprocess.CalledProcessError:
-            return "inactive: error"
-        
-    def toggle_zapret_service(self):
-        current_action = self.check_zapret_service()
-        try:
-            if current_action == "Выключить":
-                subprocess.run(['sudo', 'systemctl', 'stop', 'zapret2'], check=True)
-            else:
-                subprocess.run(['sudo', 'systemctl', 'start', 'zapret2'], check=True)
-        except subprocess.CalledProcessError as e:
-            npyscreen.notify_confirm(f"Ошибка при изменении состояния сервиса: {e}", title="Ошибка")
-        self.check_zapret_service()
-        self.parentApp.switchForm('SERVICE')
 
     def exit_application(self):
         exit()
