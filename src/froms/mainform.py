@@ -24,7 +24,6 @@ class MainForm(npyscreen.FormBaseNew):
         self.add(npyscreen.ButtonPress, name="Настройка конфигурации", when_pressed_function=self.call_config_form)
         self.add(npyscreen.ButtonPress, name="Настройка сервиса", when_pressed_function=self.call_service_form)
         self.add(npyscreen.ButtonPress, name="Проверить на наличие обновлений", when_pressed_function=self.unknown_function)
-        self.add(npyscreen.FixedText, value="")
         self.add(npyscreen.ButtonPress, name="Выйти", when_pressed_function=self.exit_application)
         self.add(npyscreen.TitleText, name="\n\nCreated by sesdear.github.io", editable=False)
 
