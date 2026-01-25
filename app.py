@@ -5,7 +5,7 @@ from src.froms.unknown import Unknown
 from src.froms.serviceform import ServiceForm
 from src.froms.changestrategyform import ChangeStrategyForm
 from src.froms.manualstrategy import ManualChangeStrategy
-
+import os, sys
 class App(npyscreen.NPSAppManaged):
     def onStart(self):
         self.addForm('MAIN', MainForm, name="Zapret2 Control Panel")
@@ -19,5 +19,8 @@ class App(npyscreen.NPSAppManaged):
         
         
 if __name__ == '__main__':
+    if os.geteuid() != 0:
+        print("Запуск возможен только от root")
+        sys.exit(1)
     app = App()
     app.run()
