@@ -3,7 +3,7 @@
 ## !!! Программа не является установщиком Zapret2 !!! 
 
 ### Быстрая установка
-`curl -s https://github.com/Sesdear/zapret2-control-panel/raw/refs/heads/main/install.sh | sudo bash`
+`curl -s https://raw.githubusercontent.com/Sesdear/zapret2-control-panel/refs/heads/main/install.sh | bash`
 
 ### Мануальная установка
 1. `git clone https://github.com/Sesdear/zapret2-control-panel.git && cd zapret2-control-panel`
