@@ -5,6 +5,7 @@ APP_DIR="/opt/zapret2-control-panel"
 REPO_URL="https://github.com/Sesdear/zapret2-control-panel.git"
 BIN_PATH="/usr/local/bin/zapret2-cp"
 
+echo "Проверка прав суперпользователя..."
 if [ "$(id -u)" -eq 0 ]; then
     SUDO=""
 else
@@ -13,23 +14,21 @@ else
     elif command -v doas >/dev/null 2>&1; then
         SUDO="doas"
     else
-        echo "Требуются права суперпользователя"
+        echo "Требуются права суперпользователя."
         exit 1
     fi
 fi
 
 if [ -r /proc/mounts ] && [ "$(awk '$2=="/"{print $4}' /proc/mounts)" = "ro" ]; then
-    echo "Файловая система только для чтения"
+    echo "Файловая система только для чтения."
     exit 1
 fi
 
 install_dependencies() {
-    [ -f /etc/os-release ] || {
-        echo "Не удалось определить ОС"
-        exit 1
-    }
+    [ -f /etc/os-release ] || { echo "Не удалось определить ОС"; exit 1; }
     . /etc/os-release
 
+    echo "Установка зависимостей..."
     case "$ID" in
         arch|artix|cachyos|endeavouros|manjaro|garuda)
             $SUDO pacman -Syu --noconfirm
@@ -68,6 +67,7 @@ install_dependencies() {
 command -v git >/dev/null 2>&1 || install_dependencies
 command -v python3 >/dev/null 2>&1 || install_dependencies
 
+echo "Клонируем или обновляем репозиторий..."
 if [ ! -d "$APP_DIR" ]; then
     $SUDO git clone "$REPO_URL" "$APP_DIR"
 else
@@ -81,13 +81,16 @@ fi
 
 cd "$APP_DIR"
 
+echo "Создание виртуального окружения..."
 if [ ! -d ".venv" ]; then
     $SUDO python3 -m venv .venv
 fi
 
+echo "Установка зависимостей Python..."
 $SUDO ./.venv/bin/python -m pip install --upgrade pip
 $SUDO ./.venv/bin/python -m pip install -r requirements.txt
 
+echo "Создание команды zapret2-cp..."
 $SUDO tee "$BIN_PATH" >/dev/null << 'EOF'
 #!/bin/sh
 
@@ -109,5 +112,5 @@ EOF
 
 $SUDO chmod +x "$BIN_PATH"
 
-echo "Установка завершена"
-echo "Запуск: sudo zapret2-cp"
+echo "Установка завершена."
+echo "Запуск приложения: sudo zapret2-cp"
