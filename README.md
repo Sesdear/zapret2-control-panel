@@ -2,7 +2,7 @@
 ## TUI программа для более удобного управления [Zapret2](https://github.com/bol-van/zapret2)
 #### !!! Программа не является установщиком Zapret2 !!! 
 
-### Быстрная установка
+### Быстрая установка
 `curl -s https://github.com/Sesdear/zapret2-control-panel/raw/refs/heads/main/install.sh | bash`
 
 ### Мануальная установка
