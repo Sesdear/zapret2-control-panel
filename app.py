@@ -6,6 +6,14 @@ from src.froms.serviceform import ServiceForm
 from src.froms.changestrategyform import ChangeStrategyForm
 from src.froms.manualstrategy import ManualChangeStrategy
 import os, sys
+
+import npyscreen
+import sys
+import fcntl
+import struct
+import termios
+import os
+
 class App(npyscreen.NPSAppManaged):
     def onStart(self):
         self.addForm('MAIN', MainForm, name="Zapret2 Control Panel")
