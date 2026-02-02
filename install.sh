@@ -59,7 +59,7 @@ install_dependencies() {
 
 command -v git >/dev/null 2>&1 || install_dependencies
 
-PYTHON_BIN="$(command -v python3.11 || true)"
+ PYTHON_BIN="$(command -v python3.11 || command -v python || true)"
 
 if [ -z "$PYTHON_BIN" ]; then
     echo "Python 3.11 не найден — устанавливаем зависимости"
