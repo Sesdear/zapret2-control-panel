@@ -1,5 +1,4 @@
 import subprocess
-import npyscreen
 
 class ServiceActions:
     @staticmethod
